@@ -3,7 +3,18 @@ import { getProjects } from '@/lib/data'
 
 export const metadata = {
   title: 'Projects',
-  description: 'Selected work by Achmad Hasanudin — web, mobile, and backend projects.',
+  description:
+    'Explore graphic design, branding, and creative projects by Lolly Genda Aprilia.',
+  alternates: {
+    canonical: '/projects',
+  },
+  openGraph: {
+    ...previous.openGraph,
+    url: '/projects',
+  },
+  twitter: {
+    ...previous.twitter,
+  },
 }
 
 async function ProjectsPage() {

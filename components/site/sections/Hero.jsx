@@ -7,6 +7,8 @@ import { ArrowRight, Download, Mail, Github, Linkedin, MapPin } from 'lucide-rea
 import { Button } from '@/components/ui/button'
 
 export function Hero({ profile }) {
+  const firstName = profile.full_name?.trim()?.split(' ')[0] || 'Lolly'
+
   return (
     <section className="relative overflow-hidden">
       {/* subtle gradient bg */}
@@ -31,8 +33,7 @@ export function Hero({ profile }) {
             </div>
 
             <h1 className="mt-5 font-heading text-5xl md:text-6xl font-semibold leading-tight text-balance">
-              Hi, I&apos;m {profile.full_name.split(' ')[0]}.{' '}
-              <span className="text-primary">{profile.headline}.</span>
+              Hi, I&apos;m {firstName}. { }<span className="text-primary">{profile.headline}</span>
             </h1>
 
             <p className="mt-5 text-lg text-muted-foreground max-w-xl leading-relaxed">
@@ -100,8 +101,8 @@ export function Hero({ profile }) {
               <div className="absolute inset-0 rounded-[2rem] bg-gradient-to-br from-primary/25 to-secondary/25 blur-2xl" />
               <div className="relative h-full w-full overflow-hidden rounded-[2rem] border border-border shadow-card bg-card">
                 <Image
-                  src={profile.avatar_url}
-                  alt={profile.full_name}
+                  src={profile.avatar_url || '/app/icons/master.ico'}
+                  alt={`Portrait of ${profile.full_name}`}
                   fill
                   priority
                   quality={90}

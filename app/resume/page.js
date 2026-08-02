@@ -13,8 +13,20 @@ import { dateRange, formatMonthYear } from '@/lib/utils/format'
 
 export const metadata = {
   title: 'Resume',
-  description: 'Professional resume of Achmad Hasanudin — experience, education, skills, and certifications.',
+  description:
+    'View the professional resume of Lolly Genda Aprilia, including education, experience, skills, and certifications.',
+  alternates: {
+    canonical: '/resume',
+  },
+  openGraph: {
+    ...previous.openGraph,
+    url: '/resume',
+  },
+  twitter: {
+    ...previous.twitter,
+  },
 }
+
 
 async function ResumePage() {
   const [profile, experiences, education, certifications, techStack] = await Promise.all([

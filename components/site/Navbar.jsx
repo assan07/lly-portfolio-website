@@ -45,7 +45,7 @@ export function Navbar() {
 
         <nav className="hidden md:flex items-center gap-1">
           {navItems.map((item) => {
-            const active = pathname === item.href
+            const active = item.href === '/' ? pathname === '/' : pathname.startsWith(item.href)
             return (
               <Link
                 key={item.href}
@@ -87,7 +87,7 @@ export function Navbar() {
         <div className="md:hidden border-t border-border/60 bg-background">
           <div className="container py-3 flex flex-col gap-1">
             {navItems.map((item) => {
-              const active = pathname === item.href
+              const active = item.href === '/' ? pathname === '/' : pathname.startsWith(item.href)
               return (
                 <Link
                   key={item.href}

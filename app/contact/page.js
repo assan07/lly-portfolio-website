@@ -4,7 +4,18 @@ import { getProfile } from '@/lib/data'
 
 export const metadata = {
   title: 'Contact',
-  description: 'Get in touch with Achmad Hasanudin.',
+  description:
+    'Contact Lolly Genda Aprilia for collaborations, graphic design services, or professional opportunities.',
+  alternates: {
+    canonical: '/contact',
+  },
+  openGraph: {
+    ...previous.openGraph,
+    url: '/contact',
+  },
+  twitter: {
+    ...previous.twitter,
+  },
 }
 
 async function ContactPage() {

@@ -11,7 +11,7 @@ const nextConfig = {
       { protocol: 'https', hostname: 'images.unsplash.com' },
       { protocol: 'https', hostname: 'cdn.simpleicons.org' },
       { protocol: 'https', hostname: 'avatars.githubusercontent.com' },
-      { protocol: 'https', hostname: 'wuksrkyjlvplwgqokldh.supabase.co' },
+      { protocol: 'https', hostname: 'abprtdoeiqxfdpvoreej.supabase.co' },
     ],
   },
 

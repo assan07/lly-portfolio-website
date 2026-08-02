@@ -15,6 +15,8 @@ import {
   getProjects,
 } from '@/lib/data'
 
+import { generatePersonSchema } from '@/lib/seo/person-schema'
+
 async function App() {
   const [profile, techStack, experiences, education, certifications, featuredProjects] =
     await Promise.all([
@@ -25,9 +27,22 @@ async function App() {
       getCertifications(),
       getProjects({ featuredOnly: true }),
     ])
+  const personSchema = generatePersonSchema(
+    profile,
+    process.env.NEXT_PUBLIC_BASE_URL
+  )
 
   return (
     <>
+      {personSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(personSchema),
+          }}
+        />
+      )}
+
       <Hero profile={profile} />
       <About profile={profile} />
       <TechStack groups={techStack} />
