@@ -1,49 +1,69 @@
--- Supabase schema for Achmad Hasanudin personal branding site.
--- Run this once in Supabase SQL Editor.
-
+-- Personal Branding Portfolio Database Schema
+-- Version : 2.0
+-- Stack   : Next.js 15 + Supabase + PostgreSQL
+-- Purpose : Production-ready database schema for a personal portfolio website
+-- ============================================================================
 create extension if not exists "pgcrypto";
 
 -- Tables
 create table if not exists public.profiles (
-  id uuid primary key default gen_random_uuid(),
-  user_id uuid not null unique references auth.users(id) on delete cascade,
-  full_name text ,
-  headline text,
-  tagline text,
-  bio text,
-  location text,
-  email text,
-  avatar_url text,
-  resume_url text,
-  socials jsonb default '{}'::jsonb,
-  is_admin boolean not null default false,
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
+    id uuid primary key default gen_random_uuid(),
+    user_id uuid not null unique references auth.users(id) on delete cascade,
+
+    full_name text,
+    headline text,
+    tagline text,
+    bio text,
+
+    location text,
+    email text,
+
+    avatar_url text,
+    resume_url text,
+
+    socials jsonb not null default '{}'::jsonb,
+
+    is_admin boolean not null default false,
+
+    created_at timestamptz not null default now(),
+    updated_at timestamptz not null default now()
 );
 
 create table if not exists public.skills (
-  id uuid primary key default gen_random_uuid(),
-  category text not null,
-  name text not null,
-  slug text not null unique,
-  color text not null default '000000',
-  level text not null check (level in ('Advanced','Intermediate','Basic')),
-  sort_order int not null default 0,
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
+    id uuid primary key default gen_random_uuid(),
+
+    category text not null,
+    name text not null,
+    slug text not null unique,
+
+    skill_icon text,
+
+    color text not null default '000000',
+
+    level text not null
+        check (level in ('Advanced', 'Intermediate', 'Basic')),
+
+    sort_order integer not null default 0,
+
+    created_at timestamptz not null default now(),
+    updated_at timestamptz not null default now()
 );
 
 create table if not exists public.experiences (
-  id uuid primary key default gen_random_uuid(),
-  role text not null,
-  company text not null,
-  location text,
-  start_date date not null,
-  end_date date,
-  description text,
-  highlights text[] default '{}',
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
+    id uuid primary key default gen_random_uuid(),
+
+    role text not null,
+    company text not null,
+    location text,
+
+    start_date date not null,
+    end_date date,
+
+    description text,
+    highlights text[] default '{}',
+
+    created_at timestamptz not null default now(),
+    updated_at timestamptz not null default now()
 );
 
 create table if not exists public.education (
@@ -121,39 +141,38 @@ LANGUAGE plpgsql
 SECURITY DEFINER
 AS $$
 BEGIN
-  INSERT INTO public.profiles (
-    user_id,
-    email,
-    is_admin
-  )
-  VALUES (
-    NEW.id,
-    NEW.email,
-    true
-  );
+    INSERT INTO public.profiles (
+        user_id,
+        email,
+        is_admin
+    )
+    VALUES (
+        NEW.id,
+        NEW.email,
+        false
+    );
 
-  RETURN NEW;
+    RETURN NEW;
 END;
 $$;
 
-create or replace function public.set_updated_at()
-returns trigger
-language plpgsql
-as $$
-begin
-  new.updated_at = now();
-  return new;
-end;
+CREATE OR REPLACE FUNCTION public.set_updated_at()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    NEW.updated_at = now();
+    RETURN NEW;
+END;
 $$;
 
 -- Triggers
+drop trigger if exists on_auth_user_created on auth.users;
 
-drop trigger IF EXISTS on_auth_user_created ON auth.users;
-
-CREATE TRIGGER on_auth_user_created
-AFTER INSERT ON auth.users
-FOR EACH ROW
-EXECUTE FUNCTION public.handle_new_user();
+create trigger on_auth_user_created
+after insert on auth.users
+for each row
+execute function public.handle_new_user();
 
 drop trigger if exists trg_profiles_updated_at on public.profiles;
 create trigger trg_profiles_updated_at
@@ -191,7 +210,7 @@ before update on public.projects
 for each row
 execute function public.set_updated_at();
 
--- Enable RLS
+-- Enable RLS (Row Level Security)
 alter table public.profiles       enable row level security;
 alter table public.skills         enable row level security;
 alter table public.experiences    enable row level security;
@@ -207,6 +226,7 @@ do $$ begin create policy "public read experiences"    on public.experiences    
 do $$ begin create policy "public read education"      on public.education      for select using (true); exception when duplicate_object then null; end $$;
 do $$ begin create policy "public read certifications" on public.certifications for select using (true); exception when duplicate_object then null; end $$;
 do $$ begin create policy "public read projects"       on public.projects       for select using (true); exception when duplicate_object then null; end $$;
+
 
 -- Authenticated write policies (any signed-in Supabase user is admin for a single-owner site)
 do $$ begin create policy "auth write profiles"       on public.profiles       for all to authenticated using (true) with check (true); exception when duplicate_object then null; end $$;
@@ -225,6 +245,7 @@ do $$ begin create policy "public insert messages" on public.messages for insert
 --   project-images      (public)
 --   resumes             (public)
 --   certificate-images  (public)
+--  skill-icons         (public)
 --
 -- Storage RLS: allow authenticated users to upload / manage files in these buckets.
 do $$ begin
@@ -252,7 +273,6 @@ do $$ begin
     using (bucket_id = 'resumes') with check (bucket_id = 'resumes');
 exception when duplicate_object then null; end $$;
 
-
 -- resumes
 do $$ begin
   create policy "auth upload certificate-images"
@@ -275,14 +295,50 @@ exception
   when duplicate_object then null;
 end $$;
 
+do $$
+begin
+    create policy "auth upload skill-icons"
+    on storage.objects
+    for insert
+    to authenticated
+    with check (
+        bucket_id = 'skill-icons'
+    );
+exception
+    when duplicate_object then null;
+end $$;
+
+do $$
+begin
+    create policy "auth manage skill-icons"
+    on storage.objects
+    for all
+    to authenticated
+    using (
+        bucket_id = 'skill-icons'
+    )
+    with check (
+        bucket_id = 'skill-icons'
+    );
+exception
+    when duplicate_object then null;
+end $$;
+
 
 -- bucket
-INSERT INTO storage.buckets (id, name, public)
-VALUES
-('avatars', 'avatars', true),
-('resumes', 'resumes', false),
-('profile-images', 'profile-images', true),
-('project-images', 'project-images', true),
-('certificate-images', 'certificate-images', true)
-ON CONFLICT (id) DO NOTHING;
+insert into storage.buckets (
+    id,
+    name,
+    public
+)
+values
+    ('avatars', 'avatars', true),
+    ('profile-images', 'profile-images', true),
+    ('project-images', 'project-images', true),
+    ('certificate-images', 'certificate-images', true),
+    ('skill-icons', 'skill-icons', true),
+    ('resumes', 'resumes', false)
+on conflict (id)
+do nothing;
 
+-- End of Schema

@@ -51,7 +51,7 @@ async function handleRoute(request, { params }) {
       return handleCORS(
         NextResponse.json({
           message: 'ok',
-          service: 'achmad-personal-site',
+          service: 'lolly-personal-site',
         })
       )
     }
