@@ -18,13 +18,6 @@ export const metadata = {
   alternates: {
     canonical: '/resume',
   },
-  openGraph: {
-    ...previous.openGraph,
-    url: '/resume',
-  },
-  twitter: {
-    ...previous.twitter,
-  },
 }
 
 

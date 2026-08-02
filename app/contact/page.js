@@ -9,13 +9,6 @@ export const metadata = {
   alternates: {
     canonical: '/contact',
   },
-  openGraph: {
-    ...previous.openGraph,
-    url: '/contact',
-  },
-  twitter: {
-    ...previous.twitter,
-  },
 }
 
 async function ContactPage() {

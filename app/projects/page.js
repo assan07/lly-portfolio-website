@@ -8,13 +8,7 @@ export const metadata = {
   alternates: {
     canonical: '/projects',
   },
-  openGraph: {
-    ...previous.openGraph,
-    url: '/projects',
-  },
-  twitter: {
-    ...previous.twitter,
-  },
+  
 }
 
 async function ProjectsPage() {
