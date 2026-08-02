@@ -3,8 +3,25 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { AdminSidebar } from './_components/AdminSidebar'
 import { AdminTopbar } from './_components/AdminTopbar'
+export const metadata = {
+  title: {
+    default: 'Admin Dashboard',
+    template: '%s | Admin Dashboard',
+  },
 
-export const metadata = { title: 'Admin', robots: { index: false, follow: false } }
+  description: 'Administrator dashboard for managing portfolio content.',
+
+  robots: {
+    index: false,
+    follow: false,
+    googleBot: {
+      index: false,
+      follow: false,
+      noimageindex: true,
+      nosnippet: true,
+    },
+  },
+}
 
 async function AdminLayout({ children }) {
   // login page has its own layout
