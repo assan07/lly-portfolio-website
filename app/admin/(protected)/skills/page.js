@@ -11,6 +11,7 @@ async function SkillsAdmin() {
     { name: 'category', label: 'Category', type: 'select', options: ['Frontend', 'Mobile', 'Backend', 'Database', 'Tools'] },
     { name: 'name', label: 'Name', type: 'text', placeholder: 'e.g. React' },
     { name: 'slug', label: 'Icon slug', type: 'text', placeholder: 'react', hint: 'Simple Icons slug (see simpleicons.org)' },
+    { name: 'skill_icon', label: 'Skill Icon ', type: 'upload', bucket: 'skill-icons', accept: 'image/svg+xml,image/png,image/webp', kind: 'image', hint: 'Optional.Upload a custom icon if it is unavailable in Simple Icons.', },
     { name: 'color', label: 'Icon color (hex, no #)', type: 'text', placeholder: '61DAFB' },
     { name: 'level', label: 'Level', type: 'select', options: ['Advanced', 'Intermediate', 'Basic'] },
     { name: 'sort_order', label: 'Sort order', type: 'text', placeholder: '0' },
