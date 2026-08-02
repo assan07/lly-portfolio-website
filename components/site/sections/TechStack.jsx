@@ -38,7 +38,7 @@ export function TechStack({ groups }) {
                 >
                   <div className="h-12 w-12 flex items-center justify-center">
                     <Image
-                      src={`https://cdn.simpleicons.org/${item.slug}/${item.color}`}
+                      src={item.skill_icon || `https://cdn.simpleicons.org/${item.slug}/${item.color}`}
                       alt={item.name}
                       width={40}
                       height={40}
